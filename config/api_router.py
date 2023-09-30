@@ -1,7 +1,7 @@
 from django.conf import settings
 from rest_framework.routers import DefaultRouter, SimpleRouter
 
-from ripple.users.api.views import UserViewSet
+from ripple.users.api.views import UserViewSet, ReferenceViewSet
 
 if settings.DEBUG:
     router = DefaultRouter()
@@ -9,6 +9,7 @@ else:
     router = SimpleRouter()
 
 router.register("users", UserViewSet)
+router.register("references", ReferenceViewSet)
 
 
 app_name = "api"

@@ -30,6 +30,7 @@
            href="{% url 'account_email' %}"
            role="button">E-Mail</a>
         <!-- Your Stuff: Custom user template urls -->
+        <a class="btn btn-primary" href="{% url 'users:references' pk=object.pk %}" role="button">References</a>
       </div>
     </div>
     <!-- End Action buttons -->

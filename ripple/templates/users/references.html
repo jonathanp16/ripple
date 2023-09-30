@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}
+  User: 
+  
+    {{ object.name }}
+  
+  
+{% endblock title %}
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12">
+        <h2>
+        
+        
+          {{ object.name }}
+        
+      </h2>
+    </div>
+  </div>
+  <!-- show referrals in a list -->
+    <div class="row">
+        <div class="col-sm-12">
+        <h3>References</h3>
+        <ul>
+            {% for reference in references %}
+            <li>
+                <a href="{% url 'users:reference_detail' pk=reference.pk %}">
+                {{ reference.message|truncatechars:20 }}... written by {{ reference.referred_by_email }}
+                </a>
+            </li>
+            {% empty %}
+            <li>No referrals yet.</li>
+            {% endfor %}
+        </ul>
+        </div>
+    </div>
+</div>
+{% endblock content %}

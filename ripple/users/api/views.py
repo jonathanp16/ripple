@@ -4,8 +4,8 @@ from rest_framework.decorators import action
 from rest_framework.mixins import ListModelMixin, RetrieveModelMixin, UpdateModelMixin
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
-
-from .serializers import UserSerializer
+from ripple.users.models import Reference
+from .serializers import UserSerializer, ReferenceSerializer
 
 User = get_user_model()
 
@@ -23,3 +23,14 @@ class UserViewSet(RetrieveModelMixin, ListModelMixin, UpdateModelMixin, GenericV
     def me(self, request):
         serializer = UserSerializer(request.user, context={"request": request})
         return Response(status=status.HTTP_200_OK, data=serializer.data)
+    
+
+class ReferenceViewSet(RetrieveModelMixin, ListModelMixin, UpdateModelMixin, GenericViewSet):
+    serializer_class = ReferenceSerializer
+    queryset = Reference.objects.all()
+    lookup_field = "pk"
+
+    # create reference for user
+    def create(self, request, *args, **kwargs):
+        request.data["user"] = request.user.id
+        return super().create(request, *args, **kwargs)

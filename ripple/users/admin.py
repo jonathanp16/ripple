@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.contrib.auth import admin as auth_admin
 from django.contrib.auth import get_user_model, decorators
 from django.utils.translation import gettext_lazy as _
-
+from .models import Reference
 from ripple.users.forms import UserAdminChangeForm, UserAdminCreationForm
 
 User = get_user_model()
@@ -47,3 +47,10 @@ class UserAdmin(auth_admin.UserAdmin):
             },
         ),
     )
+
+@admin.register(Reference)
+class ReferenceAdmin(admin.ModelAdmin):
+    list_display = ('user', 'referred_by_email', 'created_at')
+    search_fields = ('user__email', 'referred_by_email')
+    ordering = ('-created_at',)
+    list_filter = ('created_at',)

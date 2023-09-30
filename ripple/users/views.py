@@ -3,7 +3,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
-from django.views.generic import DetailView, RedirectView, UpdateView
+from django.views.generic import DetailView, RedirectView, UpdateView, ListView
+from .models import Reference
 
 User = get_user_model()
 
@@ -14,12 +15,9 @@ class UserDetailView(LoginRequiredMixin, DetailView):
     slug_url_kwarg = "id"
 
 
-user_detail_view = UserDetailView.as_view()
-
-
 class UserUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = User
-    fields = ["name"]
+    fields = ["name", "bio"]
     success_message = _("Information successfully updated")
 
     def get_success_url(self):
@@ -30,9 +28,6 @@ class UserUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
         return self.request.user
 
 
-user_update_view = UserUpdateView.as_view()
-
-
 class UserRedirectView(LoginRequiredMixin, RedirectView):
     permanent = False
 
@@ -40,4 +35,24 @@ class UserRedirectView(LoginRequiredMixin, RedirectView):
         return reverse("users:detail", kwargs={"pk": self.request.user.pk})
 
 
+class UserReferenceListView(ListView):
+    model = Reference
+    template_name = 'users/references.html'
+    context_object_name = 'references'
+    
+    def get_queryset(self):
+        user_id = self.kwargs['pk']  # Retrieve the user's ID from the URL
+        user = User.objects.get(id=user_id)
+        return Reference.objects.filter(user=user)
+
+
+class ReferenceDetailView(LoginRequiredMixin, DetailView):
+    model = Reference
+    slug_field = "id"
+    slug_url_kwarg = "id"
+
+user_detail_view = UserDetailView.as_view()
+user_update_view = UserUpdateView.as_view()
 user_redirect_view = UserRedirectView.as_view()
+user_references_view = UserReferenceListView.as_view()
+reference_detail_view = ReferenceDetailView.as_view()
